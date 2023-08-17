@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 const Widget = styled('div')(({ theme }) => ({
   padding: 16,
   borderRadius: 16,
-  width: 343,
+  width: 500,
   maxWidth: '100%',
   height:'250px',
   margin: 'auto',
@@ -18,6 +18,7 @@ const Widget = styled('div')(({ theme }) => ({
 }));
 
 const CoverImage = styled('div')({
+    marginLeft:159,
   width: 150,
   height: 150,
   objectFit: 'cover',
@@ -65,32 +66,32 @@ export default function TemperatureWidget() {
           </CoverImage>
         </Box>
         <Box sx={{display:'flex',marginTop:2,padding:1,borderRadius:1}}>
-        <Box sx={{border:'2px solid black',marginRight:0.5,height:70,borderRadius:1,width:50}}>
+        <Box sx={{border:'2px solid black',marginRight:0.5,height:70,borderRadius:1,width:80}}>
                 <Typography>
                     max temp
                 </Typography>
             </Box>
-            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:50}}>
+            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
                    min temp
                 </Typography>
             </Box>
-            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:50}}>
+            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
                 wind speed
                 </Typography>
             </Box>
-            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:50}}>
+            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
                     humid
                 </Typography>
             </Box>
-            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:50}}>
+            <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
                     precep
                 </Typography>
             </Box>
-            <Box sx={{border:'2px solid black',borderRadius:1,width:50}}>
+            <Box sx={{border:'2px solid black',borderRadius:1,width:80}}>
                 <Typography>
                     avg humid
                 </Typography>
