@@ -40,7 +40,6 @@ const TinyText = styled(Typography)({
 });
 
 export default function TemperatureWidget() {
-//   const theme = useTheme();
   return (
     <Box sx={{ width: '100%', overflow: 'hidden',display:'flex' }}>
       <Widget>

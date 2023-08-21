@@ -1,7 +1,6 @@
 // import { height } from "@mui/system";
 import React from "react";
 import TemperatureWidget from "../temperatureDisplay/temperatureDisplay";
-import "../HomePage/HomePage.css";
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField } from "@mui/material";
 import { deepOrange, deepPurple } from '@mui/material/colors';
@@ -36,7 +35,7 @@ const HomePage=()=>{
                  <Avatar sx={{ bgcolor: deepOrange[500],marginTop:'33px',marginLeft:5, }}>N</Avatar>
                  </Link>    
             </div>
-            <div className="tempWidget">
+            <div style={{ paddingTop: '50px',marginLeft: '90px'}}>
             <TemperatureWidget />
             </div>
         </div>
