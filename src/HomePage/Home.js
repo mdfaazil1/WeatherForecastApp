@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { TextField } from "@mui/material";
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import Avatar from '@mui/material/Avatar';
+import {Link} from "react-router-dom";
 
 const HomePage=()=>{
 
@@ -22,7 +23,7 @@ const HomePage=()=>{
             <div style={{display:'flex'}}>
             <TextField
                     type="text"
-                    placeholder="Search by song/album/composers..."
+                    placeholder="Search by Name/Co-ordinates"
                     // value={searchTerm}
                     // onChange={handleInputChange}
                     InputProps={{
@@ -31,7 +32,9 @@ const HomePage=()=>{
                     }}
                     sx={{ backdropFilter: 'blur(70px)', width: '60%', marginTop: "30px", marginLeft: 22,zIndex:1 }}
                 />
-                 <Avatar sx={{ bgcolor: deepOrange[500],marginTop:'33px',marginLeft:5 }}>N</Avatar>
+                <Link to="/wishlist">
+                 <Avatar sx={{ bgcolor: deepOrange[500],marginTop:'33px',marginLeft:5, }}>N</Avatar>
+                 </Link>    
             </div>
             <div className="tempWidget">
             <TemperatureWidget />

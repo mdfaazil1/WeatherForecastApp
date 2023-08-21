@@ -2,6 +2,7 @@ import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import {Card,CardMedia,CardContent} from "@mui/material"
 
 const Widget = styled('div')(({ theme }) => ({
   padding: 16,
@@ -41,7 +42,7 @@ const TinyText = styled(Typography)({
 export default function TemperatureWidget() {
 //   const theme = useTheme();
   return (
-    <Box sx={{ width: '100%', overflow: 'hidden' }}>
+    <Box sx={{ width: '100%', overflow: 'hidden',display:'flex' }}>
       <Widget>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
@@ -98,6 +99,24 @@ export default function TemperatureWidget() {
             </Box>
             </Box>
       </Widget>
+      <Card sx={{ width:250,borderRadius:10,marginRight:30,height:'280px' }}>
+      <CardMedia
+        component="img"
+        alt="weather icon"
+        height="140"
+        image="/static/images/cards/contemplative-reptile.jpg"
+        sx={{marginLeft:3,marginTop:1}}
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+            future weather predictions
+        </Typography>
+        {/* <Typography variant="body2" color="text.secondary">
+          Lizards are a widespread group of squamate reptiles, with over 6,000
+          species, ranging across all continents except Antarctica
+        </Typography> */}
+      </CardContent>
+    </Card>
     </Box>
   );
 }
