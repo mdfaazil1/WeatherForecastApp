@@ -5,8 +5,12 @@ import WeatherForecastComponent from './location/location';
 import HomePage from "./HomePage/Home";
 import SavedWeather from './SavedWeather/SavedWeather';
 import {BrowserRouter,Routes,Route} from "react-router-dom";
+import Location from './location/location';
+import Email from './Authenticate.js';
+import Login from './Phone';
 
 function App() {
+
   return (
     <div className="App">
       <BrowserRouter>

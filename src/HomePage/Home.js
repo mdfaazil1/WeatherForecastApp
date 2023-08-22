@@ -35,9 +35,7 @@ const HomePage=()=>{
                  <Avatar sx={{ bgcolor: deepOrange[500],marginTop:'33px',marginLeft:5, }}>N</Avatar>
                  </Link>    
             </div>
-            <div style={{ paddingTop: '50px',marginLeft: '90px'}}>
-            <TemperatureWidget />
-            </div>
+            <TemperatureWidget sx={{ paddingTop: '50px',marginLeft: '90px'}}/>
         </div>
     );
 }

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -40,60 +41,125 @@ const TinyText = styled(Typography)({
 });
 
 export default function TemperatureWidget() {
+
+
+
+  const [weatherData, setWeatherData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userLocation, setUserLocation] = useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+          setLoading(false);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userLocation) {
+      const fetchWeatherData = async () => {
+        const params = {
+          q: `${userLocation.latitude},${userLocation.longitude}`,
+          days: '3',
+        };
+
+        const options = {
+          method: 'GET',
+          url: 'https://weatherapi-com.p.rapidapi.com/forecast.json',
+          params,
+          headers: {
+            'X-RapidAPI-Key': 'f975f26eb2mshe985ed1001f4ea5p1c87e4jsnb3e181c3e99b',
+            'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com',
+          },
+        };
+
+        try {
+          const response = await axios.request(options);
+          setWeatherData(response.data);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+          console.error(error);
+        }
+      };
+
+      fetchWeatherData();
+    }
+  }, [userLocation]);
+
+  if (!userLocation) {
+    return <p>Loading user location... Turn on your location</p>;
+  }
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+
   return (
     <Box sx={{ width: '100%', overflow: 'hidden',display:'flex' }}>
       <Widget>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
           <Box sx={{ ml: 1.5, minWidth: 0 }}>
-            <Typography variant="caption"  fontWeight={900} fontSize={30} sx={{marginLeft:-5}}>
-                30 °C|°F
+            <Typography variant="caption"  fontWeight={900} fontSize={30} sx={{marginLeft:0}}>
+                {weatherData.current.temp_c}
             </Typography>
 
             <Typography noWrap>
                  
             </Typography>
-            <Typography  letterSpacing={-0.25} fontWeight={350} sx={{marginRight:2}}>
-                text about the weather
+            <Typography  letterSpacing={-0.25} fontWeight={350} sx={{marginRight:0}}>
+                {weatherData.current.condition.text}
             </Typography>
            
           </Box>
           <CoverImage>
             <img
               alt="temp Icon"
-            //   src="/static/images/sliders/chilling-sunday.jpg"
+              src={weatherData.current.condition.icon}
             />
           </CoverImage>
         </Box>
         <Box sx={{display:'flex',marginTop:2,padding:1,borderRadius:1}}>
         <Box sx={{border:'2px solid black',marginRight:0.5,height:70,borderRadius:1,width:80}}>
                 <Typography>
-                    max temp
+                    max temp: {weatherData.forecast.forecastday[0].day.maxtemp_c}
                 </Typography>
             </Box>
             <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
-                   min temp
+                min temp: {weatherData.forecast.forecastday[0].day.mintemp_c}
                 </Typography>
             </Box>
             <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
-                wind speed
+                wind speed: {weatherData.current.wind_kph}
                 </Typography>
             </Box>
             <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
-                    humid
+                    humidity: {weatherData.current.humidity}
                 </Typography>
             </Box>
             <Box sx={{border:'2px solid black',marginRight:0.5,borderRadius:1,width:80}}>
                 <Typography>
-                    precep
+                    total precipe: {weatherData.forecast.forecastday[0].day.totalprecip_mm}
                 </Typography>
             </Box>
             <Box sx={{border:'2px solid black',borderRadius:1,width:80}}>
                 <Typography>
-                    avg humid
+                    avg humid: {weatherData.forecast.forecastday[0].day.avghumidity}
                 </Typography>
             </Box>
             </Box>
