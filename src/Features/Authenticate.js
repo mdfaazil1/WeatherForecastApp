@@ -1,4 +1,4 @@
-import { auth, provider } from './FirebaseConfig';
+import { auth, provider } from '../FirebaseConfig';
 import { useState, useRef, useEffect } from 'react';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import React from 'react';
@@ -8,28 +8,6 @@ import Button from '@mui/material/Button';
 function Email() { 
   
   const [user, setUser] = useState(null);
-
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setSessionTimeout((prevTimeout) => prevTimeout - 1);
-  //   }, 1000);
-  //   if (sessionTimeout === 0) {
-  //     clearInterval(timer);
-  //     handleLogout();
-  //   }
-
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, [sessionTimeout]);
-
-  // useEffect(() => {
-  //   resetSessionTimeout();
-  // }, [user]);
-
-  // const resetSessionTimeout = () => {
-  //   setSessionTimeout(600);
-  // };
 
   const handleGoogleSignIn = () => {
 
