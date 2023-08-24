@@ -1,5 +1,5 @@
 import { auth, provider } from '../FirebaseConfig';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import React from 'react';
 import axios from 'axios';
@@ -23,7 +23,6 @@ function Email() {
         console.log(err);
       });
   };
-  const forms = useRef();
 
   const handleLogout = () => {
     signOut(auth)
@@ -33,11 +32,6 @@ function Email() {
       .catch((err) => {
         console.log(err);
       });
-  };
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
   return (
     <div >

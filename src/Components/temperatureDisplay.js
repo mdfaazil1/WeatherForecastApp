@@ -45,24 +45,22 @@ const TinyText = styled(Typography)({
 });
 
 export default function TemperatureWidget() {
-  
+  // const[Loading,setLoading]=useState(true);
   const weatherData=useContext(UserContext);
-  // const[weatherData,setWeatherData]=useState([]);
   useEffect(()=>{
-    // setWeatherData(DATA);
     console.log("check2",weatherData);
   },[])
 
 
-
   return (
     <Box sx={{ width: '100%', overflow: 'hidden',display:'flex' }}>
+      
       {weatherData&&
       <Widget >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
           <Box sx={{ ml: 1.5, minWidth: 0 }}>
-            <Typography variant="caption"  fontWeight={900} fontSize={30} sx={{marginLeft:12}}>
+            <Typography variant="caption"  fontWeight={900} fontSize={30} sx={{marginLeft:"5%"}}>
                 {weatherData.current?.temp_c||'Current Temp Data not available at the moment'}°C
             </Typography>
 
