@@ -1,34 +1,32 @@
 import React from "react";
-import TemperatureWidget from "../Components/temperatureDisplay";
+import TemperatureWidget from "../Components/WeatherDisplay";
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, IconButton, TextField } from "@mui/material";
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import Avatar from '@mui/material/Avatar';
 import {Link} from "react-router-dom";
 import { useState,useEffect,useContext,createContext } from "react";
 import UserContext from "../MyContext";
-import { GetData } from "../API/Api"; 
+import { GetData } from "../Api/Api";
 import { Rings } from "react-loader-spinner";
 import { auth,provider } from "../FirebaseConfig";
 import { signInWithPopup, signOut } from 'firebase/auth';
 
 
 const HomePage=()=>{
-  // const user = auth.currentUser;
-  const [weatherData, setWeatherData] = useState([]);
+ 
+  const [WeatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userLocation, setUserLocation] = useState(null);
-  const [City,setCity]=useState("");
+  const [UserLocation, setUserLocation] = useState(null);
+  const [city,setCity]=useState("");
 
   const [user, setUser] = useState(null);
 
   const handleGoogleSignIn = () => {
-
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
         console.log(user);
-        
         setUser(user);
         console.log("user name: "+user.displayName)
       })
@@ -36,9 +34,17 @@ const HomePage=()=>{
         console.log(err);
       });
   };
+  const SignOut=()=>{
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
-
-  useEffect(() => {
+  const Locate=()=>{
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -55,41 +61,55 @@ const HomePage=()=>{
       console.error('Geolocation is not supported by this browser.');
       setLoading(false);
     }
+  }
+  useEffect(() => {
+    Locate();
   }, []);
 
   const handleInputChange=()=>{
+    console.log("after giving search",city)
+    if(isNaN(city)){
+      setUserLocation((city.split(',')));
+      console.log("from input",UserLocation);
+      setCity("");
+      fetchData();
+    }
+    else if(!isNaN(city)){
     setUserLocation("");
     fetchData();
   }
+  console.log("after giving search",city,UserLocation)
+  }
+
 
   async function fetchData() {
-    if (userLocation||City) {
+    if (UserLocation||city) {
       try {
-        const data = await GetData(userLocation.latitude,userLocation.longitude,City);
+        console.log("fetchdata method ")
+        const data = await GetData(UserLocation.latitude,UserLocation.longitude,city);
         setWeatherData(data);
-        setLoading(false); // Set loading to false after data is fetched and set
+        setLoading(false); 
       } catch (error) {
         console.error(error);
       }
     }
-    
   }
 
   useEffect(() => {
       fetchData();
-    }, [userLocation]);
+    }, [UserLocation]);
     
 
-  // if (!userLocation) {
-  //   return <p>Loading user location... Turn on your location</p>;
-  // }
+  if (!UserLocation) {
+    return <Box style={{marginLeft:'43%',marginTop:'20%'}}><Rings /></Box>;
+  }
   if (loading) {
-    return <Rings/>;
+    return <Box style={{marginLeft:'43%',marginTop:'20%'}}><Rings /></Box>;
   }
 
     const style1={
         backgroundColor:'skyblue',
-        height:'602px',
+        paddingBottom:"14.3%",
     }
     const style2={
         backgroundColor:'yellow',
@@ -99,23 +119,29 @@ const HomePage=()=>{
         <Box style={style1}>
             <Box style={{display:'flex'}}>
             <TextField
+                    required
                     type="text"
                     placeholder="Search by Name/Co-ordinates"
-                    value={City}
+                    value={city}
                     onChange={(e)=>{setCity(e.target.value)}}
                     InputProps={{
                     startAdornment: <SearchIcon />,
                     style: { color: "black" }
                     }}
-                    sx={{ backdropFilter: 'blur(70px)', width: '60%', marginTop: "30px", marginLeft: 22,zIndex:1 }}
+                    sx={{ backdropFilter: 'blur(70px)',width: '60%', marginTop: "30px", marginLeft: 22,'& .MuiInputBase-input': {
+                      padding: '1%',
+                    }, }}
                 />
-                <Button onClick={handleInputChange}>Search</Button>
+                <Button onClick={handleInputChange} 
+                sx={{marginTop:'2%',marginLeft:'1%'}}>
+                  Search
+                </Button>
                 {user?(
-                <Link to="/wishlist" style={{textDecoration:'none' }}>
-                    <Avatar sx={{ bgcolor: deepOrange[500],marginTop:'33px',marginLeft:5}}>{user.displayName[0]}</Avatar>
-                 </Link> ):(<Button onClick={handleGoogleSignIn}>Login</Button>)}   
+                <IconButton onClick={SignOut}>
+                    <Avatar sx={{ bgcolor: deepOrange[500]}}>{user.displayName[0]}</Avatar>
+                </IconButton>):(<Button variant="contained" onClick={handleGoogleSignIn} sx={{marginTop:'2%',marginLeft:'12%'}}>Login</Button>)}   
             </Box>
-             <UserContext.Provider   value={weatherData}>
+             <UserContext.Provider   value={WeatherData}>
                 <TemperatureWidget/>
             </UserContext.Provider> 
         </Box>
