@@ -1,11 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import WeatherApp from './Components/location';
-import WeatherForecastComponent from './Components/location';
+import WeatherApp from "./Components/Location";
+import WeatherForecastComponent from './Components/Location';
 import HomePage from "./Containers/Home";
 import SavedWeather from './Containers/SavedWeather';
 import {BrowserRouter,Routes,Route} from "react-router-dom";
-import Location from './Components/location';
+import Location from './Components/Location';
 import Email from './Features/Authenticate.js';
 import Login from './Phone';
 import { Home } from '@mui/icons-material';

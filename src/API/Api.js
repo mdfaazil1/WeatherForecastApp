@@ -1,20 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-export async function GetData(latitude,longitude,City){
-    let q;
-    let days;
-    console.log("check4 from api ",latitude,longitude,City);
-    if (!City) {
-      q = `${latitude},${longitude}`;
-      days = '3';
-      console.log("if city=null from api",q);
-    } else {
-      q = City;
-      days = '3';
-      console.log("if city!=null",q);
-    }
-    
+export async function GetData(q,days){    
       const options = {
         method: 'GET',
         url: 'https://weatherapi-com.p.rapidapi.com/forecast.json',
@@ -31,6 +18,7 @@ export async function GetData(latitude,longitude,City){
         console.log("check from api.js",response.data)
         return response.data;
       } catch (error) {
+
         console.error(error);
       }     
 }

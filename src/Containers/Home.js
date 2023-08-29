@@ -1,26 +1,43 @@
 import React from "react";
 import TemperatureWidget from "../Components/WeatherDisplay";
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Button, IconButton, TextField } from "@mui/material";
+import { Box, Button, Grid, IconButton, Stack, TextField,useTheme } from "@mui/material";
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import Avatar from '@mui/material/Avatar';
-import {Link} from "react-router-dom";
 import { useState,useEffect,useContext,createContext } from "react";
 import UserContext from "../MyContext";
 import { GetData } from "../Api/Api";
 import { Rings } from "react-loader-spinner";
 import { auth,provider } from "../FirebaseConfig";
 import { signInWithPopup, signOut } from 'firebase/auth';
-
+import CircularProgress from '@mui/material/CircularProgress';
+import theme from "../theme";
+import Skeleton from '@mui/material/Skeleton';
 
 const HomePage=()=>{
- 
+  
+  const theme=useTheme();
   const [WeatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [UserLocation, setUserLocation] = useState(null);
   const [city,setCity]=useState("");
-
+  let days='3';
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log('User is signed in:', user);
+      } else {
+        console.log('User is signed out');
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
 
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider)
@@ -49,8 +66,9 @@ const HomePage=()=>{
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setUserLocation({ latitude, longitude });
-          console.log("lat",latitude);
+          let InitialLocation=`${latitude},${longitude}`;
+          setUserLocation(InitialLocation);
+          // console.log("lat",UserLocation[0],"long",UserLocation[1]);
         },
         (error) => {
           console.error('Error getting user location:', error);
@@ -67,26 +85,17 @@ const HomePage=()=>{
   }, []);
 
   const handleInputChange=()=>{
-    console.log("after giving search",city)
-    if(isNaN(city)){
-      setUserLocation((city.split(',')));
-      console.log("from input",UserLocation);
-      setCity("");
-      fetchData();
-    }
-    else if(!isNaN(city)){
-    setUserLocation("");
+    setUserLocation(city);
     fetchData();
-  }
-  console.log("after giving search",city,UserLocation)
+  console.log("after giving search city",city)
   }
 
 
   async function fetchData() {
     if (UserLocation||city) {
       try {
-        console.log("fetchdata method ")
-        const data = await GetData(UserLocation.latitude,UserLocation.longitude,city);
+        console.log("fetchdata method UserLocation", UserLocation);
+        const data = await GetData(UserLocation,days);
         setWeatherData(data);
         setLoading(false); 
       } catch (error) {
@@ -100,24 +109,22 @@ const HomePage=()=>{
     }, [UserLocation]);
     
 
-  if (!UserLocation) {
-    return <Box style={{marginLeft:'43%',marginTop:'20%'}}><Rings /></Box>;
-  }
-  if (loading) {
-    return <Box style={{marginLeft:'43%',marginTop:'20%'}}><Rings /></Box>;
-  }
+  if (!UserLocation||loading) {
+    return <Stack>
+              <Box sx={{display:'flex'}}>
+                <Skeleton variant="text" sx={{width:'60%',fontSize:'3rem',ml:22,mt:2}}/>
+                <Skeleton variant="rounded" sx={{width:'6%',ml:5,mt:4}} height={35}/>
 
-    const style1={
-        backgroundColor:'skyblue',
-        paddingBottom:"14.3%",
-    }
-    const style2={
-        backgroundColor:'yellow',
-        height:'602px'
-    }
+              </Box>
+              <Box sx={{display:'flex'}}>
+              <Skeleton variant="rounded" sx={{width:'40%',ml:22 ,mt:8}} height={300}/>
+              <Skeleton variant="rounded"sx={{width:'20%',ml:10,mt:8}} height={300}/>
+              </Box>
+          </Stack>;
+  }
     return(
-        <Box style={style1}>
-            <Box style={{display:'flex'}}>
+        <Grid sx={{backgroundColor:theme.palette.primary.main}}>
+            <Grid style={{display:'flex'}}>
             <TextField
                     required
                     type="text"
@@ -132,19 +139,21 @@ const HomePage=()=>{
                       padding: '1%',
                     }, }}
                 />
-                <Button onClick={handleInputChange} 
+                <Button 
+                variant="contained"
+                onClick={handleInputChange} 
                 sx={{marginTop:'2%',marginLeft:'1%'}}>
                   Search
                 </Button>
                 {user?(
-                <IconButton onClick={SignOut}>
+                <IconButton onClick={SignOut} sx={{marginLeft:'12%',marginTop:'2%'}}>
                     <Avatar sx={{ bgcolor: deepOrange[500]}}>{user.displayName[0]}</Avatar>
                 </IconButton>):(<Button variant="contained" onClick={handleGoogleSignIn} sx={{marginTop:'2%',marginLeft:'12%'}}>Login</Button>)}   
-            </Box>
+            </Grid>
              <UserContext.Provider   value={WeatherData}>
                 <TemperatureWidget/>
             </UserContext.Provider> 
-        </Box>
+        </Grid>
     );
 }
 export default HomePage;
