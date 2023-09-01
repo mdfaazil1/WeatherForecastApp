@@ -1,31 +1,28 @@
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Divider, Tooltip, Typography } from "@mui/material";
 import React from "react";
+import theme from "../theme";
+import { useTheme } from "@emotion/react";
 
-const WeatherCard=({Icon,Value})=>{
+const WeatherCard=({Icon,Value,Text})=>{
+    const theme=useTheme();
     const BoxStyle={
         // border:'5px solid darkblue',
-        marginRight:0.5,
+        marginRight:"7%",
         borderRadius:1,
+        ml:"4%",
       };
-    
-      const ImgStyle={
-        height:"20px",
-      }
-    
-      const TypographyStyle={
-        fontSize:"12px",
-        marginTop:1,
-      }
+
       return(
         <>
         <Box sx={BoxStyle}>
-            <Typography sx={TypographyStyle}>
+          <Tooltip title={Text} placement="top-start">
+            <Typography sx={theme.typography}>
                 {Icon}
                 <br/>
                 {Value||"Forecast Not Available at the Moment"}
             </Typography>
+            </Tooltip>
         </Box>
-        <Divider orientation="vertical" flexItem style={{ borderColor: 'black' }} />
         </>
       )
 }
