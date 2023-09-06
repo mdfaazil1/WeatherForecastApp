@@ -5,14 +5,20 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from '@mui/material';
 import theme from './theme';
+import { Provider } from 'react-redux';
+import store from './Store/Store';
+// import { legacy_createStore as createStore } from 'redux';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <Provider store={store}>
   <ThemeProvider theme={theme}>
   <React.StrictMode>
     <App />
   </React.StrictMode>
   </ThemeProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

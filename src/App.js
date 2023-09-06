@@ -11,6 +11,9 @@ import Login from './Phone';
 import { Home } from '@mui/icons-material';
 import HourlyWeather from './Components/HourlyWeather';
 import DetailedWeather from './Containers/DetailedWeather';
+import LineChart from './Components/HourGraph';
+import Compare from './Containers/Compare';
+import ProtectedRoute from './ProtectedRoutes';
 
 function App() {
 
@@ -19,8 +22,14 @@ function App() {
       <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<HomePage/>}/>
-        <Route path='/wishlist' element={<SavedWeather/>}/>
+      
+        <Route path='/wishlist' element={
+        <ProtectedRoute>
+          <SavedWeather/>
+          </ProtectedRoute>}/>
+        
         <Route path='/hourlyweather' element={<DetailedWeather/>}/>
+        <Route path='/compare' element={<Compare/>}/>
       </Routes>
       </BrowserRouter>
     </div>

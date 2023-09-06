@@ -7,10 +7,10 @@ const theme=createTheme({
         },
     },
     typography:{
-        fontFamily:"Hanalei-Fill",
+        
         h1:{
-            fontSize:80,
-            fontWeight:900,
+            fontSize:70,
+            fontWeight:600,
             color:"black"
         },
         h2:{
@@ -25,13 +25,30 @@ const theme=createTheme({
         },
         h4:{
             fontSize:23,
-            fontWeight:3,
+            fontWeight:700,
         },
         h5:{
             fontSize:16,
-            
+        },
+        h6:{
+            fontSize:19,
+            fontWeight:550
+        },
+        h7:{
+            fontSize:10,
+            fontWeight:500,
+
         }
-    }
+    },components: {
+        MuiTooltip: {
+          styleOverrides: {
+            tooltip: {
+              fontSize: '14px',
+            //   color:"red" 
+            },
+          },
+        },
+      },
 
 })
 

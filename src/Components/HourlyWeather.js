@@ -1,5 +1,5 @@
 import Grid from '@mui/material/Grid';
-import React,{useContext,useEffect} from "react";
+import React,{useContext,useEffect} from "react"; 
 import { useLocation } from "react-router-dom";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -23,8 +23,17 @@ const HourlyWeather=()=>{
     const location=useLocation();
    const WeatherData=location.state;
   useEffect(()=>{
+    console.log("from hourly weather", location);
     console.log("check from hourly weather ",WeatherData);
   },[]);
+
+  const TimeFormat=(DataTime)=>{
+    const date=new Date(DataTime);
+    const time=date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+      return time;
+  }
+
+
   const ImgStyle={
     height:"30px",
     marginLeft:500,
@@ -33,30 +42,26 @@ return(
 <Grid container spacing={2} >
   <Grid sx={{ml:12,mt:"2%",width:"50%"}} >
   {WeatherData &&
-  WeatherData.forecast.forecastday[0].hour.map((item, index) => {
-    const time = new Date(item.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-    
-    return (
-      <Accordion key={index} sx={{ mt: "1%" }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>
-            {time}
-            <img src={item.condition.icon} style={ImgStyle} />
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
+    WeatherData.forecast.forecastday[0].hour.map((item, index) => (
+        <Accordion key={index} sx={{ mt: "1%" }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>
+              {TimeFormat(item.time)}
+              <img src={item.condition.icon} style={ImgStyle} />
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
           <Typography sx={{ ml: "-60%" }}>
             Temp: {item.temp_c}
           </Typography>
         </AccordionDetails>
       </Accordion>
-    );
-  })}
+    ))}
 
 </Grid>
 <Grid sx={{mt:"2%"}} >
           <UserContext.Provider   value={WeatherData}>
-                <OverView/>
+                {/* <OverView/> */}
             </UserContext.Provider>
             </Grid>
             

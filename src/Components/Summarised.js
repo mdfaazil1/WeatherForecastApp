@@ -1,7 +1,6 @@
 import React,{useContext,useEffect} from "react";
 import UserContext from "../MyContext";
 import { Box, Typography } from "@mui/material";
-
 const OverView=()=>{
     // const theme=useTheme
     const WeatherData=useContext(UserContext);

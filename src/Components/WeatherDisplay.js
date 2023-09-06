@@ -19,28 +19,35 @@ import { Link } from 'react-router-dom';
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import GetDayOfWeek from './Day';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { addValue,deleteValue } from '../action';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const Widget = styled('div')(({ theme }) => ({
-  padding: 16,
+  // padding: 16,
   borderRadius: 16,
-  width:"40%",
+  width:"100%",
   // maxWidth: '100%',
-  // height:'100%',
-  marginLeft:172,
-  marginTop:70,
-  position: 'relative',
+  // height:'285px',
+  marginLeft:"25%",
+  marginRight:"-15%",
+  marginTop:"3%",
+  // position: 'relative',
   zIndex: 1,
   backgroundColor:
     theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.4)',
-  backdropFilter: 'blur(40px)',
+  backdropFilter: 'blur(10px)',
 }));
 
 const CoverImage = styled('div')({
-  marginTop:"9%",
-  marginLeft:"35%",
-  width: 150,
-  height: 150,
+  marginTop:"6%",
+  position:"fixed",
+  marginLeft:"64%",
+  width: "30%",
+  // height: "10%",
   objectFit: 'cover',
   overflow: 'hidden',
   flexShrink: 0,
@@ -52,21 +59,15 @@ const CoverImage = styled('div')({
 
 
 export default function TemperatureWidget() {
+  const dispatch=useDispatch();
+
+  const values=useSelector((state)=>state.values);
 
   const User=auth.currentUser;
   const WeatherData=useContext(UserContext);
 
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000); // Update every second
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, []);
-
-  const formattedTime = currentTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-  
+  const formattedTime = new Date(WeatherData.location.localtime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+  const [clicked,setClicked]=useState(true);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -75,22 +76,65 @@ export default function TemperatureWidget() {
   // const handleOpen1 = () => setOpen1(true);
   const handleClose1 = () => setOpen1(false);
 
+  
 
   const Compare=()=>{
     setOpen1(true);
-
   }
-
-  const AddFav=()=>{
-    if(User){
-      console.log("check from login check",User);
-      toast.error("user is logged in");
-
+  useEffect(()=>{
+    if(values){
+    const SavedName=values.find(LocationName=>LocationName.location.name==WeatherData.location.name);
+    if(SavedName){
+      setClicked(false);
     }
     else{
+      setClicked(true);
+    }
+  }
+  else{
+    setClicked(true);
+  }
+  },[WeatherData.location.name])
+  useEffect(()=>{
+    if(!User){
+      setClicked(true);
+    }
+  },[User]);
+
+  const AddFav=(WeatherData)=>{
+    if(User){
+      console.log("check from login check",User);
+      setClicked(!clicked);
+      if(clicked){
+      console.log("click heart",clicked);
+      dispatch(addValue(WeatherData));
+      console.log("from store", WeatherData);
+    }
+    else{
+      const SavedName=values.find(LocationName=>LocationName.location.name==WeatherData.location.name);
+      dispatch(deleteValue(SavedName));
+    }
+    }
+    else{
+      setClicked(true);
       console.log("check from login check",User);
       toast.error("Login please", {position: "bottom-left"})
     }
+  }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const OpenMenu = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+  const GetDayOfWeek=(dateString)=> {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const date = new Date(dateString);
+    const dayOfWeekIndex = date.getDay();
+    return daysOfWeek[dayOfWeekIndex];
   }
 
   const ImgStyle={
@@ -109,13 +153,15 @@ export default function TemperatureWidget() {
   };
 
   return (
-    <Grid sx={{display:'flex'}}>
+    <Grid sx={{display:'flex',height:"63vh" }}>
       {WeatherData&&
       <Widget >
         <Grid sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton sx={{mt:-25}} onClick={Compare}>
+          <Link to="/compare" style={{marginBottom:"27%",marginLeft:"2.7%"}} state={WeatherData}>
+          <IconButton  >
             <CompareIcon/>
           </IconButton>
+          </Link>
           <Modal
               open={open1}
               onClose={handleClose1}
@@ -123,66 +169,91 @@ export default function TemperatureWidget() {
               aria-describedby="modal-modal-description"
           >
             <Grid sx={ModalStyle}>
-                
+              Store check
+                {values&&values.map((item,index)=>(
+                  <div key={index}>{item.location.name}</div>
+                ))}
             </Grid>
           </Modal>
           
-          <Grid sx={{ ml: 2,mt:5, minWidth: 0 }}>
-            <Typography variant='h1'  fontWeight={900} sx={{marginLeft:1}} >
+          <Grid sx={{ ml:"2%",mt:"10%"}}>
+            <Typography variant='h1'  sx={{marginLeft:"1%"}} >
                 {WeatherData.current?.temp_c||'Current Temp Data not available at the moment'}°C
             </Typography>
             
-            <Typography variant='h2' sx={{marginLeft:0.5}}>
+            <Typography variant='h2' sx={{width:"100%"}}>
                 {WeatherData.location?.name||'Location Data not available at the moment'}
             </Typography>
-            <Typography variant='h3' sx={{marginLeft:2,mt:1}}>
+            <Typography variant='h3' sx={{ml:"1%",mt:"1%"}}>
                 {WeatherData.current?.condition?.text||'Weather Data not available at the moment'}
-                <br/>{formattedTime}
+                
             </Typography>
-
+            <Typography variant='h3' sx={{ml:"-1%",mt:"6%"}}>
+            {GetDayOfWeek(WeatherData?.location?.localtime)}, {formattedTime}
+            </Typography>
           </Grid>
 
-          <CoverImage>
+          <CoverImage >
             <img
               alt="temp Icon"
               src={WeatherData.current?.condition?.icon}
             />
           </CoverImage>
 
-          <Tooltip title="More" placement='right-start'>
-          <IconButton sx={{marginTop:-25}} onClick={handleOpen}>
-            <MoreVertIcon />
+          <Tooltip title="Like" placement='right-start'>
+          <IconButton sx={{mb:"27%",ml:"90%",position:"fixed"}} 
+           controls={OpenMenu ? 'basic-menu' : undefined}
+           haspopup="true"
+           expanded={OpenMenu ? 'true' : undefined}
+           onClick={()=>AddFav(WeatherData)}>
+            {clicked?<FavoriteBorderIcon/>:<FavoriteIcon sx={{color:"red"}}/>}
           </IconButton>
           </Tooltip>
-          <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-          >
-            <Grid sx={ModalStyle}>
-                <Button contained onClick={AddFav} sx={{backgroundColor:"grey",color:"black"}}>
-                    Add to Fav
-                </Button>
-            </Grid>
-          </Modal>
-
         </Grid>
-        <Stack direction='row' sx={{mt:'4%'}}>
+        <Grid container sx={{mt:'4%',justifyContent:"space-evenly"}}>
+          <Grid item xs={12} sm={6} md={2} >
           <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Maximum Temperature"/>
-          <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Minimum Temperature"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+                      <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Minimum Temperature"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
           <WeatherCard Icon={<img src={WindIcon} style={ImgStyle}/>} Value={WeatherData.current?.wind_kph+'km/h'} Text="Wind Speed"/>
-          <WeatherCard Icon={<img src={HumidIcon} style={ImgStyle}/>} Value={WeatherData.current?.humidity+"%"} Text="Humidity"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+
+<WeatherCard Icon={<img src={HumidIcon} style={ImgStyle}/>} Value={WeatherData.current?.humidity+"%"} Text="Humidity"/>
+</Grid>
+<Grid item xs={12} sm={6} md={2} >
           <WeatherCard Icon={<img src={PrecipitaionIcon} style={ImgStyle}/>} Value={WeatherData.forecast?.forecastday[0]?.day?.totalprecip_mm+"mm"} Text="Precipitation"/>
-        </Stack>
-        <Link
+          </Grid>
+        </Grid>
+        
+      </Widget>}
+      
+
+
+      {/* <Paper sx={{
+        borderRadius:4,
+        marginTop:"5%",
+        marginLeft:"5%",
+        backdropFilter: 'blur(4px)',
+        backgroundColor:'rgba(255,255,255,0.4)',
+        width:'30%',
+        height:'50%',
+        padding:"1%",
+       }}> */}
+        {/* <UserContext.Provider   value={WeatherData}>
+        <LineChart/>
+        </UserContext.Provider> */}
+        {/* <Link
       to="/hourlyweather"
       state={WeatherData}
       style={{
         textDecoration: 'none',
         color: 'black',
-        marginTop:"2%",
-        marginLeft: '78%',
+        marginTop:"5%",
+        marginLeft: '73%',
         display: 'flex', 
       }}
     >
@@ -190,33 +261,9 @@ export default function TemperatureWidget() {
         Hourly Details
       </Typography>
       <ArrowForwardIcon sx={{ height: '20px' }} />
-    </Link>
-        
-      </Widget>}
-      <Paper sx={{
-        borderRadius:16,
-        marginTop:"4.5%",
-        marginLeft:"5%",
-        backdropFilter: 'blur(40px)',
-        backgroundColor:'rgba(255,255,255,0.4)',
-        width:'28%',
-        height:'100%',
-        zIndex: 1,
-        paddingBottom:"1.5%"
-       }}>
-        <Typography variant='h2'>
-          Next 3 Days
-        </Typography>
-        {/* <Divider orientation="horizontal" flexItem style={{ borderColor: 'black' }} /> */}
-      {WeatherData&& WeatherData.forecast.forecastday.map((Wdata,index)=>(
-      <CardContent key={index}>
-      <Typography>
-            Temperature On {GetDayOfWeek(Wdata.date)} seems to be {Wdata.day.maxtemp_c}°C
-              <img src={Wdata.day.condition.icon} alt="Weather icon" />
-      </Typography>
-    </CardContent>
-      ))}
-    </Paper>
+    </Link> */}
+
+    {/* </Paper> */}
     </Grid>
   );
 }
