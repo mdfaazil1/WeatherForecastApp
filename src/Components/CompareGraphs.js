@@ -1,7 +1,8 @@
 import React, { useContext, useState,useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
+import { Grid} from "@mui/material";
 import UserContext from "../MyContext";
 import { Pie } from "react-chartjs-2";
 import { FormControl, FormControlLabel, Radio, RadioGroup, Typography } from "@mui/material";
@@ -20,9 +21,9 @@ const CompareChart = () => {
     ? WeatherData1?.forecast?.forecastday[0]?.hour?.map((item) => item.temp_c)
     : WeatherData1?.forecast?.forecastday[0]?.hour?.map((item) => item.temp_f);
     setTempData1(temperatureData1);
-
   }},[WeatherData1,selectedUnit])
 
+  
   const temperatureData = selectedUnit === "celsius"
     ? WeatherData?.forecast?.forecastday[0]?.hour?.map((item) => item.temp_c)
     : WeatherData?.forecast?.forecastday[0]?.hour?.map((item) => item.temp_f);
@@ -50,18 +51,6 @@ const CompareChart = () => {
         backgroundColor: `${selectedUnit==="celsius"?"blue":"orange"}`,
         borderColor: "brown",
         data: TempData1,
-      },
-    ],
-  };
-
-  const data1 = {
-    labels: timeLabels,
-    datasets: [
-      {
-        label: `Temperature in ${selectedUnit === "celsius" ? "Celsius" : "Fahrenheit"}`,
-        backgroundColor:["red","yellow","blue"],
-        borderColor: "black",
-        data: temperatureData,
       },
     ],
   };
@@ -117,7 +106,6 @@ const CompareChart = () => {
           />
         </RadioGroup>
       </FormControl>
-      {/* <Pie data={data1}/> */}
     </>
   );
 };

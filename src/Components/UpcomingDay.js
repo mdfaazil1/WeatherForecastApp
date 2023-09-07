@@ -28,8 +28,8 @@ const UpcomingDay=()=>{
 <Box sx={{ display:"flex",mt:2,ml:"20%" }}>
       <Grid container spacing={5}>
             {WeatherData&&WeatherData.forecast.forecastday.slice(1).map((Day,index)=>(
-                <Grid item xs={4} key={index} sx={{marginRight:"3.5%"}}>
-                    <Card sx={{backdropFilter:"blur(4px)",backgroundColor:"rgba(255,255,255,0.4)",width:"130%",height:"85%"}}>
+                <Grid item xs={4} key={index}  sx={{marginRight:"3.5%"}}>
+                    <Card elevation={0} sx={{backdropFilter:"blur(4px)",backgroundColor:"rgba(255,255,255,0.4)",width:"130%",height:"85%"}}>
                        <Typography variant="h6">
                          {GetDayOfWeek(Day.date)}<br/>
                         </Typography>

@@ -14,8 +14,8 @@ const AstroDetails=()=>{
     const BoxStyle={
         height:"15vh",
         display:"flex",
-        width:"156%",
-        marginLeft:"26%",
+        width:"161.5%",
+        marginLeft:"20%",
         marginTop:"2.5%",
         backgroundColor:'rgba(255,255,255,0.4)',
         backdropFilter: 'blur(3px)',
@@ -28,7 +28,7 @@ const AstroDetails=()=>{
       }
     return(
         <Box style={BoxStyle}>
-         <Stack direction='row' sx={{justifyContent:"space-between",width:"165vh"}}>
+         <Stack direction='row' sx={{justifyContent:"space-evenly",ml:"2%",width:"165vh"}}>
           <WeatherCard Icon={<img src={Sunrise} style={ImgStyle}/>} Value={WeatherData.forecast?.forecastday[0]?.astro?.sunrise} Text="Sunrise Time"/>
           <WeatherCard Icon={<img src={Sunset} style={ImgStyle}/>}  Value={WeatherData.forecast?.forecastday[0]?.astro?.sunset} Text="Sunset Time"/>
           <WeatherCard Icon={<img src={VisibilityIcon} style={ImgStyle}/>} Value={WeatherData.current?.vis_km+" km"} Text="Visibility"/>

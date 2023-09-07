@@ -39,23 +39,17 @@ const HomePage=()=>{
   const [user, setUser] = useState(null);
 
   const User=auth.currentUser;
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       console.log('User is signed in:', user);
-  //     } else {
-  //       console.log('User is signed out');
-  //     }
-  //   });
 
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, [user]);
   const dispatch=useDispatch();
 
   const values=useSelector((state)=>state.values);
 
+  useEffect(()=>{
+    const isLoggedIn=localStorage.getItem('dataKey');
+    if(isLoggedIn){
+      setUser(isLoggedIn);
+    }
+  },[])
 
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider)
@@ -64,7 +58,7 @@ const HomePage=()=>{
         console.log(user);
         setUser(user);
         localStorage.setItem('dataKey', JSON.stringify(user));
-        console.log("user name: "+user.displayName)
+        // console.log("user name: "+user.displayName)
       })
       .catch((err) => {
         console.log(err);
@@ -114,7 +108,7 @@ const HomePage=()=>{
   }
   const location=useLocation();
   const WeatherData1=location.state;
-  
+
   useEffect(() => {
     if(WeatherData1){
       setUserLocation(WeatherData1?.location?.name);
@@ -133,9 +127,7 @@ const HomePage=()=>{
     }
     else{
     setUserLocation(city);
-    fetchData();
     setCity("");
-  console.log("after giving search city",city)
     }
   }
 
@@ -149,7 +141,14 @@ const HomePage=()=>{
       }  catch (error) {
         console.error(error);
         toast.error(error.message,{position:"bottom-left"});
+        setCity("");
+        console.log("log from FetchData error",city)
       }
+    }
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleInputChange();
     }
   }
 
@@ -183,37 +182,43 @@ const HomePage=()=>{
         backgroundPosition:"center",
         backgroundSize:"cover"}}>
           <ToastContainer/>
-            <Grid style={{display:'flex'}}>
+            <Grid style={{display:'flex',height:"10.5%"}}>
             <TextField
                     required
                     type="text"
                     placeholder="Search by Name/Co-ordinates"
                     value={city}
                     onChange={(e)=>{setCity(e.target.value)}}
+                    onKeyDown={handleKeyDown}
                     InputProps={{
                     startAdornment: <SearchIcon />,
                     style: { color: "white" }
                     }}
-                    sx={{ backdropFilter: 'blur(70px)',width: '60%', marginTop: "2%", marginLeft: 22,'& .MuiInputBase-input': {
+                    sx={{ backdropFilter: 'blur(70px)',width: '62%', marginTop: "2%", marginLeft: "10%",'& .MuiInputBase-input': {
                       padding: '1%',
                     }, }}
                 />
                 <Button
-                variant="contained"
-                onClick={handleInputChange}
-                sx={{marginTop:'2%',marginLeft:'1%',color:"black",backgroundColor:"grey"}}>
+                  variant="contained"
+                  onClick={handleInputChange}
+                  sx={{
+                  marginTop: '2%',
+                  marginLeft: '1%',
+                  color: 'black',
+                  }}
+                >
                   Search
                 </Button>
+
                 {user||User?(
-                <IconButton  sx={{marginLeft:'7.6%'}}
+                <IconButton  sx={{marginLeft:'7.6%',mt:"1.7%",height:"50px",width:"50px"}}
                 aria-controls={open ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 >
-                {/* <Link to="/wishlist" style={{marginTop:'2%',marginLeft:'7%',textDecoration:"none"}}> */}
-                    <Avatar sx={{ bgcolor: deepOrange[500],mb:"-70%"}}>{User.displayName[0]}</Avatar>
-                    </IconButton>):(<Button variant="contained" onClick={handleGoogleSignIn} sx={{marginTop:'2%',marginLeft:'5.5%',backgroundColor:"grey"}}>Login</Button>)}
+                    <Avatar sx={{ bgcolor: deepOrange[500]}}></Avatar>
+                    </IconButton>):(<Button variant="contained" onClick={handleGoogleSignIn} sx={{marginTop:'2%',marginLeft:'5.5%',}}>Login</Button>)}
                     <Menu
                       id="basic-menu"
                       anchorEl={anchorEl}
@@ -223,7 +228,6 @@ const HomePage=()=>{
                       'aria-labelledby': 'basic-button',
                     }}
                     >
-                      <MenuItem onClick={handleClose}>Profile</MenuItem>
                       <Link to="/wishlist" style={{textDecoration:"none",color:"black"}}> <MenuItem  >Favourites</MenuItem></Link>
                       <MenuItem onClick={SignOut}>Logout</MenuItem>
                     </Menu>
@@ -235,7 +239,7 @@ const HomePage=()=>{
                     <TemperatureWidget/>
                   </Grid>
                   <Grid item xs={6}>
-                  <Paper sx={{
+                  <Paper elevation={0} sx={{
                                         borderRadius:4,
                                         marginTop:"3%",
                                         marginLeft:"20%",
@@ -244,15 +248,16 @@ const HomePage=()=>{
                                         width:'60%',
                                         height:'57%',
                                         padding:"1%",
+                                        
                   }}>
                     <LineChart/>
                     </Paper>
                   </Grid>
                   <Grid item xs={6}>
-                  <Typography variant="h4" sx={{mt:1,mr:"18%"}}>
+                  <Typography variant="h4" sx={{mt:1,mr:"25%"}}>
                   Additional Info  
                 </Typography>
-                <Divider orientation="horizontal" sx={{borderColor:"black",width:"90%",ml:"28%"}}/>
+                <Divider orientation="horizontal" sx={{borderColor:"black",width:"90%",ml:"22%"}}/>
                   <AstroDetails />
                   </Grid>
                   <Grid item xs={6} >

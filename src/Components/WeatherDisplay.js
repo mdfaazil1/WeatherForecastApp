@@ -32,7 +32,7 @@ const Widget = styled('div')(({ theme }) => ({
   width:"100%",
   // maxWidth: '100%',
   // height:'285px',
-  marginLeft:"25%",
+  marginLeft:"20%",
   marginRight:"-15%",
   marginTop:"3%",
   // position: 'relative',
@@ -212,10 +212,10 @@ export default function TemperatureWidget() {
         </Grid>
         <Grid container sx={{mt:'4%',justifyContent:"space-evenly"}}>
           <Grid item xs={12} sm={6} md={2} >
-          <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Maximum Temperature"/>
+          <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Max.Temperature"/>
           </Grid>
           <Grid item xs={12} sm={6} md={2} >
-                      <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Minimum Temperature"/>
+                      <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Min.Temperature"/>
           </Grid>
           <Grid item xs={12} sm={6} md={2} >
           <WeatherCard Icon={<img src={WindIcon} style={ImgStyle}/>} Value={WeatherData.current?.wind_kph+'km/h'} Text="Wind Speed"/>

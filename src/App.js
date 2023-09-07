@@ -14,6 +14,7 @@ import DetailedWeather from './Containers/DetailedWeather';
 import LineChart from './Components/HourGraph';
 import Compare from './Containers/Compare';
 import ProtectedRoute from './ProtectedRoutes';
+import ErrorPage from './Containers/ErrorNotFoundPage';
 
 function App() {
 
@@ -26,10 +27,11 @@ function App() {
         <Route path='/wishlist' element={
         <ProtectedRoute>
           <SavedWeather/>
-          </ProtectedRoute>}/>
+        </ProtectedRoute>}/>
         
         <Route path='/hourlyweather' element={<DetailedWeather/>}/>
         <Route path='/compare' element={<Compare/>}/>
+        <Route path='*' element={<ErrorPage/>}/>
       </Routes>
       </BrowserRouter>
     </div>

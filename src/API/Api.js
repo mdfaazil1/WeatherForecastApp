@@ -19,6 +19,7 @@ export async function GetData(q,days){
         return response.data;
       } catch (error) {
         console.error(error);
+        console.log("From api.js error",q);
     if (error.response && error.response.status === 400) {
       throw new Error("Invalid input. Please check the location and try again.");
     }

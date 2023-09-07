@@ -27,6 +27,7 @@ import {
 import UserContext from "../MyContext";
 import CompareChart from "../Components/CompareGraphs";
 import LineChart from "../Components/HourGraph";
+import BarGrah from "../Components/BarGraph";
 
 const Compare = () => {
   const [UserLocation, setUserLocation] = useState("");
@@ -36,12 +37,12 @@ const Compare = () => {
   const [WeatherData,setWeatherData]=useState();
   let days = 3;
   const location = useLocation();
-  
+
   useEffect(()=>{
     let WData = location.state;
     setWeatherData(WData);
   },[])
-  
+
 
   // Use useEffect to fetch data when UserLocation changes
   useEffect(() => {
@@ -63,22 +64,33 @@ const Compare = () => {
     fetchData(); // Call fetchData when UserLocation changes
   }, [UserLocation]);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleInputChange();
+    }
+  }
+
   const handleInputChange = () => {
     if (city === "") {
       toast.warning("Please Enter the Location", { position: "bottom-left" });
     }
-    else if(city==WeatherData?.location?.name){
+    else if(UserLocation===city||WeatherData?.location?.name.toLowerCase()===city.toLowerCase()){
+        console.log("from if else of compare container",WeatherData?.location?.name)
         toast.warning("Comparison Cant be made with the same Location, Please re-enter different Location", { position: "bottom-left" });
-    } 
+    }
     else {
       setUserLocation(city);
       setCity("");
+      console.log("from else in Compare",WeatherData.location.name);
     }
   };
   const InterchangeValue=()=>{
-    const TempData=WeatherData1;
+    if(!WeatherData1){
+        toast.warning("Please select a Location to swap",{position:"bottom-left"})
+    }
+    else{const TempData=WeatherData1;
     setWeatherData1(WeatherData);
-    setWeatherData(TempData);
+    setWeatherData(TempData);}
   }
   const ImgStyle={
     height:"55px",
@@ -88,17 +100,24 @@ const Compare = () => {
       <ToastContainer />
       <Box sx={{backgroundImage:`url(${BackgroundImg})`,
         backgroundRepeat:"no-repeat",
-        padding:0,
-        height:"100vh",
+        height:"100%",
+        p:"1%",
         backgroundPosition:"center",
         backgroundSize:"cover"}}>
-            <Grid container sx={{pt:"2%"}}>
-                <Grid xs={5} sx={{
-                    backdropFilter: 'blur(4px)',
+            <Grid>
+            
+            <Typography variant="h2">
+                Compare Location's weather
+            </Typography>
+
+            </Grid>
+            <Grid container sx={{pt:"2%"}} spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={5} sx={{
+                    backdropFilter: 'blur(10px)',
                     backgroundColor:'rgba(255,255,255,0.4)',
-                    ml:"6%",
+                    ml:"7%",
                     borderRadius:"10px"}}>
-                        <Typography variant="h2" sx={{mt:"12%"}}>
+                        <Typography variant="h2" sx={{mt:"10%"}}>
                         {WeatherData?.location?.name}
                         </Typography>
                         <Typography variant="h4">
@@ -107,30 +126,41 @@ const Compare = () => {
                         <Typography variant="h3">
                             The weather feels like {WeatherData?.current?.feelslike_c}°C
                         </Typography>
-                        <Stack direction="row" sx={{ml:"4%",mr:"2%",justifyContent:"space-evenly"}}>
-                        <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData?.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Max.Temperature"/>
-                        <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData?.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Min.Temperature"/>
-                        <WeatherCard Icon={<img src={WindIcon} style={ImgStyle}/>} Value={WeatherData?.current?.wind_kph+'km/h'} Text="Wind Speed"/>
-                        <WeatherCard Icon={<img src={HumidIcon} style={ImgStyle}/>} Value={WeatherData?.current?.humidity+"%"} Text="Humidity"/>
-                        <WeatherCard Icon={<img src={PrecipitaionIcon} style={ImgStyle}/>} Value={WeatherData?.forecast?.forecastday[0]?.day?.totalprecip_mm+"mm"} Text="Precipitation"/>
-                        </Stack>
-     
+                        <Grid container sx={{mt:'1%',justifyContent:"space-evenly"}}>
+          <Grid item xs={12} sm={6} md={2} >
+          <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData?.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Max.Temperature"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+                      <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData?.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Min.Temperature"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+          <WeatherCard Icon={<img src={WindIcon} style={ImgStyle}/>} Value={WeatherData?.current?.wind_kph+'km/h'} Text="Wind Speed"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+
+<WeatherCard Icon={<img src={HumidIcon} style={ImgStyle}/>} Value={WeatherData?.current?.humidity+"%"} Text="Humidity"/>
+</Grid>
+<Grid item xs={12} sm={6} md={2} >
+          <WeatherCard Icon={<img src={PrecipitaionIcon} style={ImgStyle}/>} Value={WeatherData?.forecast?.forecastday[0]?.day?.totalprecip_mm+"mm"} Text="Precipitation"/>
+          </Grid>
+        </Grid>
+
                 </Grid>
-                <IconButton onClick={InterchangeValue} sx={{height:"10%",ml:"1%"}}>
-                    <Tooltip title="Change">
+                <IconButton onClick={InterchangeValue} sx={{height:"10%"}}>
+                    <Tooltip title="Swap">
                         <CompareArrowsIcon/>
                     </Tooltip>
                 </IconButton>
-                <Grid xs={5} sx={{
-                    backdropFilter: 'blur(4px)',
+                <Grid item xs={12} sm={12} md={6} lg={5} sx={{
+                    backdropFilter: 'blur(10px)',
                     backgroundColor:'rgba(255,255,255,0.4)',
-                    ml:"1%",
                     borderRadius:"10px"}}>
                         <TextField
                          required
                          type="text"
                          placeholder="Search by Name/Co-ordinates"
                          value={city}
+                         onKeyDown={handleKeyDown}
                          onChange={(e) => {
                          setCity(e.target.value);
                         }}
@@ -139,7 +169,7 @@ const Compare = () => {
                          style: { color: "black" },
                         }}
                         sx={{
-                         backdropFilter: "blur(70px)",
+                        //  backdropFilter: "blur(5px)",
                          width: "60%",
                          marginTop: "2%",
                          marginLeft: "1%",
@@ -151,13 +181,13 @@ const Compare = () => {
                         <Button
                             variant="contained"
                             onClick={handleInputChange}
-                            sx={{ marginTop: "2%", height:"10.5%",marginLeft: "2%", color: "black", backgroundColor: "grey" }}
+                            sx={{ marginTop: "2%", height:"10.5%",marginLeft: "2%", color: "black" }}
                         >
                             Search
                         </Button>
                         <br/>
                         {!loading && <>
-                        <Typography variant="h2" sx={{mt:"4%"}}>
+                        <Typography variant="h2" sx={{mt:"2%"}}>
                             {WeatherData1?.location?.name}
                         </Typography>
                         <Typography variant="h4">
@@ -166,39 +196,48 @@ const Compare = () => {
                         <Typography variant="h3">
                             The weather feels like {WeatherData1?.current?.feelslike_c}°C
                         </Typography>
-                        <Stack direction="row" sx={{ml:"3%",justifyContent:"space-evenly"}}>
-                        <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData1?.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Max.Temperature"/>
-                        <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData1?.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Min.Temperature"/>
-                        <WeatherCard Icon={<img src={WindIcon} style={ImgStyle}/>} Value={WeatherData1?.current?.wind_kph+'km/h'} Text="Wind Speed"/>
-                        <WeatherCard Icon={<img src={HumidIcon} style={ImgStyle}/>} Value={WeatherData1?.current?.humidity+"%"} Text="Humidity"/>
-                        <WeatherCard Icon={<img src={PrecipitaionIcon} style={ImgStyle}/>} Value={WeatherData1?.forecast?.forecastday[0]?.day?.totalprecip_mm+"mm"} Text="Precipitation"/>
-                        </Stack>
-                            
+                        <Grid container sx={{mt:'1%',justifyContent:"space-evenly"}}>
+          <Grid item xs={12} sm={6} md={2} >
+          <WeatherCard Icon={<img src={MaximumTemp} style={ImgStyle}/>} Value={WeatherData1?.forecast?.forecastday[0]?.day.maxtemp_c+"°C"} Text="Max.Temperature"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+                      <WeatherCard Icon={<img src={MinimumTemp} style={ImgStyle}/>}  Value={WeatherData1?.forecast?.forecastday[0]?.day.mintemp_c+"°C"} Text="Min.Temperature"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+          <WeatherCard Icon={<img src={WindIcon} style={ImgStyle}/>} Value={WeatherData1?.current?.wind_kph+'km/h'} Text="Wind Speed"/>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} >
+
+<WeatherCard Icon={<img src={HumidIcon} style={ImgStyle}/>} Value={WeatherData1?.current?.humidity+"%"} Text="Humidity"/>
+</Grid>
+<Grid item xs={12} sm={6} md={2} >
+          <WeatherCard Icon={<img src={PrecipitaionIcon} style={ImgStyle}/>} Value={WeatherData1?.forecast?.forecastday[0]?.day?.totalprecip_mm+"mm"} Text="Precipitation"/>
+          </Grid>
+        </Grid>
                         </>
                         }
-                        
+
                 </Grid>
-                <Grid sx={{
-                    backdropFilter: 'blur(4px)',
-                    backgroundColor:'rgba(255,255,255,0.4)',
-                    ml:"30%",
-                    mt:"1%",
-                    mr:"5%",
-                    // height:"10%",
-                    width:"40%",
-                    p:"1%",
-                    mb:"2.2%",
-                    borderRadius:"10px"}}>
+                </Grid>
+
             {WeatherData||WeatherData1?
                         (<UserContext.Provider value={{WeatherData,WeatherData1}}>
+                           <Grid container spacing={0} sx={{pt:"1%",pl:"6%"}}> 
+                            <Grid item xs={12} sm={12} md={6} lg={5.3} sx={{ backdropFilter: 'blur(10px)',
+                    backgroundColor:'rgba(255,255,255,0.4)',borderRadius:"10px",mr:"4.2%",p:"1%"}}>
                                 <CompareChart/>
-                            </UserContext.Provider>):(<UserContext.Provider value={WeatherData}>
-                                <LineChart/>
-                            </UserContext.Provider>)}
-                </Grid>
-                
-            </Grid>
-            
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={5.3} sx={{p:"1%",borderRadius:"10px", backdropFilter: 'blur(10px)',
+                    backgroundColor:'rgba(255,255,255,0.4)'}}>
+                                <BarGrah/>
+                                </Grid>
+                            </Grid>
+                            </UserContext.Provider>)
+                            :
+                            (<UserContext.Provider value={WeatherData}>
+                                <Grid>HIIIi</Grid>
+                            </UserContext.Provider>)
+                            }
       </Box>
     </>
   );

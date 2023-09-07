@@ -5,6 +5,7 @@ const theme=createTheme({
         primary:{
             main:'rgba(4, 255, 253, 0.16)'
         },
+
     },
     typography:{
         
@@ -47,7 +48,17 @@ const theme=createTheme({
             //   color:"red" 
             },
           },
-        },
+        },    MuiButton: {
+            styleOverrides: {
+              root: {
+                backgroundColor: 'skyblue', 
+                color: 'black', 
+                '&:hover': {
+                  backgroundColor: 'skyblue', 
+                },
+              },
+            },
+          },
       },
 
 })
