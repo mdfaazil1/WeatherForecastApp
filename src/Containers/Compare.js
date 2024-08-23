@@ -124,7 +124,7 @@ const Compare = () => {
                         {WeatherData?.current?.temp_c}°C
                         </Typography>
                         <Typography variant="h3">
-                            The weather feels like {WeatherData?.current?.feelslike_c}°C
+                            This weather {WeatherData?.current?.feelslike_c}°C
                         </Typography>
                         <Grid container sx={{mt:'1%',justifyContent:"space-evenly"}}>
           <Grid item xs={12} sm={6} md={2} >
